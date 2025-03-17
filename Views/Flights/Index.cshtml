@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Data.Entities.Flight>
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+<h1>Flights</h1>
+@if (AuthUser.LoggedUser is not null && AuthUser.LoggedUser.IsAdmin)
+{
+	<p>
+	 <a asp-action="Create">Create New</a>
+	</p>
+}
+
+<div>
+	@foreach (var item in Model.Where(x => x.CapacityOfBusinessClass > 0 || x.CapacityOfPassengers > 0))
+	{
+	 <p style="border:solid; border-color:lightblue; display:inline-block">
+	  From: @item.LocationFrom <br />
+	  To: @item.LocationTo<br />
+	  Take Off Date: @item.TakeOff <br />
+			@if (AuthUser.LoggedUser is null || AuthUser.LoggedUser.IsAdmin == false)
+			{
+		  <a asp-controller="Reservations" asp-action="Create" asp-route-id="@item.Id" > Reserve </a>
+			}
+			@if (AuthUser.LoggedUser is not null && AuthUser.LoggedUser.IsAdmin)
+			{
+		  <a asp-controller="Flights" asp-action="Details" asp-route-id="@item.Id"> Details </a>
+		  <a asp-controller="Flights" asp-action="Edit" asp-route-id="@item.Id"> Edit </a>
+		  <a asp-controller="Flights" asp-action="Delete" asp-route-id="@item.Id"> Delete </a>
+			}
+	 </p>
+	 <br />
+	}
+</div>
